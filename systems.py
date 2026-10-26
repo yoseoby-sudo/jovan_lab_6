@@ -45,22 +45,39 @@ class Product:
             "price": self._price,
             "stock": self._stock
         }
-    
 
+#Managing a collection of products and transaction history.
+class Inventory:
 
-# --- Test code for Product class ---
-if __name__ == "__main__":
-    # 1. Create a Product object
-    p1 = Product(1, "Laptop", 1200.00, 15)
-    
-    # 2. Test display_information()
-    print("Testing display_information():")
-    p1.display_information()
-    
-    # 3. Test update_stock()
-    print("\nTesting update_stock(+5):")
-    p1.update_stock(5)
-    p1.display_information()
-    
-    # 4. Test properties
-    print(f"\nChecked property -> Product ID: {p1.product_id}, Name: {p1.name}")
+    def __init__(self):
+        self._products = []
+        self._transaction_history = []
+
+    #Adds a Product object to the inventory list.
+    def add_product(self, product):
+        self._products.append(product)
+
+    #Searches for a Product by ID and returns the object, or None if not found.
+    def search_product(self, product_id):
+        for product in self._products:
+            if product.product_id == product_id:
+                return product
+        return None
+
+    #Displays all products in the inventory.
+    def display_all(self):
+        print("\nCurrent Inventory")
+        print("-" * 64)
+        if not self._products:
+            print("No products in inventory.")
+        else:
+            for product in self._products:
+                product.display_information()
+        print("-" * 64)
+
+    #Records a transaction entry.
+    def add_transaction(self, product_id, amount):
+        self._transaction_history.append({
+            "product_id": product_id,
+            "amount": amount
+        })
