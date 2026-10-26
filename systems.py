@@ -1,3 +1,6 @@
+import json
+import os
+
 #Reponsible for story and managing an product's state
 class Product:
 
@@ -81,3 +84,41 @@ class Inventory:
             "product_id": product_id,
             "amount": amount
         })
+
+    #Loads inventory data and transaction history from JSON file.
+    def load_from_file(self, filename="inventory.json"):
+        if os.path.exists(filename):
+            print(f"{filename} found.")
+            with open(filename, "r") as file:
+                data = json.load(file)
+            print("Inventory loaded successfully.")
+
+            raw_inventory = data.get("inventory", [])
+            self._transaction_history = data.get("transaction_history", [])
+
+            #Convert raw dictionaries from JSON back into Product objects.
+            self._products = []
+            for item in raw_inventory:
+                product = Product(
+                    item["id"],
+                    item["name"],
+                    item["price"],
+                    item["stock"]
+                )
+                self._products.append(product)
+        else:
+            print(f"{filename} not found. Starting with empty inventory.")
+            self._products = []
+            self._transaction_history = []
+
+    def save_to_file(self, filename="inventory.json"):
+        """Saves current inventory and transaction history to JSON file."""
+        # Convert Product objects into dictionaries using to_dict()
+        raw_inventory = [product.to_dict() for product in self._products]
+        data = {
+            "inventory": raw_inventory,
+            "transaction_history": self._transaction_history
+        }
+        with open(filename, "w") as file:
+            json.dump(data, file, indent=4)
+        print("Inventory saved successfully!")
